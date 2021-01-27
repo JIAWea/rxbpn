@@ -135,7 +135,8 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
 
         # if last_ack is AckSubject, then stop sending data to downstream,
         # even the length of queue is 0
-        if isinstance(self.last_ack, AckSubject):
+        if isinstance(self.last_ack, AckSubject) or \
+                isinstance(self.last_ack, StopAck):
             return return_ack
 
         prev_meas_state = self.state.get_measured_state(bool(len_queue))
