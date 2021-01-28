@@ -3,8 +3,8 @@ from rx.scheduler.scheduler import Scheduler
 from rxbp.observable import Observable
 from rxbp.observerinfo import ObserverInfo
 
-from rxbpn.observer.createbufferobserver import CreateBufferedObserver
-from rxbpn.observer.sink import Sink
+from rxbpn.observer import CreateBufferedObserver
+from rxbpn.observer import Sink
 
 
 class CreateBufferObservable(Observable):

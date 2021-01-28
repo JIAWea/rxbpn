@@ -1,9 +1,7 @@
-import rxbp
-from rx.core import Observer
-from rx.disposable import Disposable
-from rxbp.scheduler import Scheduler
-
 import rxbpn
+from rxbpn import operators as op
+from rxbpn.rx import Disposable, Observer
+from rxbpn.scheduler import Scheduler
 from rxbpn.testing.tobserver import TASubscribe
 
 
@@ -15,8 +13,8 @@ def main():
         return Disposable()
 
     publisher = rxbpn.create(handler).pipe(
-        rxbp.op.map(lambda v: v * 2),
-        rxbp.op.last(),
+        op.map(lambda v: v * 2),
+        op.last(),
     )
     publisher.subscribe(
         observer=TASubscribe(),
@@ -24,6 +22,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # run()
-
     main()
