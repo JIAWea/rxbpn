@@ -80,6 +80,7 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
 
                 if isinstance(last_ack, ContinueAck):
                     last_ack = self.underlying.on_next(next)
+                    self.last_ack = last_ack
 
                     with self.lock:
                         self.queue.pop(0)
