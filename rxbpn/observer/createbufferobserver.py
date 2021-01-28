@@ -199,5 +199,20 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
         self.last_ack = continue_ack
         self._start_loop(last_ack=self.last_ack, next_index=1)
 
+    def get_queue(self):
+        return self.queue
+
+    def get_last_ack(self):
+        return self.last_ack
+
+    def get_measured_state(self):
+        return self.state.get_measured_state(bool(len(self.queue)))
+
+    def get_buffer_size(self):
+        return self.buffer_size
+
+    def get_back_pressure(self):
+        return self.back_pressure
+
     def __call__(self):
         pass
