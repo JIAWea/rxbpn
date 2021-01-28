@@ -23,12 +23,10 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
             underlying: Observer,
             scheduler: Scheduler,
             subscribe_scheduler: Scheduler,
-            buffer_size: Optional[int],
     ):
         self.underlying = underlying
         self.scheduler = scheduler
         self.subscribe_scheduler = subscribe_scheduler
-        self.buffer_size = buffer_size
 
         self.em = self.scheduler.get_execution_model()
 
@@ -52,19 +50,8 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
                         with outer_self.lock:
                             outer_self.queue.pop(0)
                             len_queue = len(outer_self.queue)
-                            return_ack = outer_self.back_pressure
-                            curr_state = outer_self.state
 
-                        if len_queue == 0:
-                            is_completed = outer_self._complete(
-                                curr_state=curr_state.get_measured_state(False),
-                                prev_state=curr_state.get_measured_state(True),
-                            )
-
-                            if not is_completed and isinstance(return_ack, AckSubject):
-                                return_ack.on_next(continue_ack)
-
-                        else:
+                        if len_queue > 0:
                             next_index = outer_self.em.next_frame_index(0)
                             outer_self._start_loop(last_ack=last_ack, next_index=next_index)
 
@@ -74,6 +61,9 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
             _observe_on(ack, self.scheduler).subscribe(ResultSingle())
 
         while True:
+            if not self.queue:
+                return
+
             next = self.queue[0]
 
             if next_index == 0:
@@ -85,7 +75,7 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
                     with self.lock:
                         self.queue.pop(0)
                         len_queue = len(self.queue)
-                        upstream_ack = self.back_pressure
+                        # upstream_ack = self.back_pressure
                         curr_state = self.state
 
                     if len_queue == 0:
@@ -96,9 +86,6 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
 
                         if is_completed:
                             return
-
-                        elif isinstance(upstream_ack, AckSubject):
-                            upstream_ack.on_next(continue_ack)
 
                         else:
                             return
@@ -119,17 +106,6 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
                 return
 
     def on_next(self, elem: ElementType):
-        if self.back_pressure is None:
-            if len(self.queue) < self.buffer_size:
-                return_ack = continue_ack
-
-            else:
-                return_ack = AckSubject()
-                self.back_pressure = return_ack
-
-        else:
-            return_ack = self.back_pressure
-
         with self.lock:
             len_queue = len(self.queue)
             self.queue.append(elem)
@@ -138,22 +114,13 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
         # even the length of queue is 0
         if isinstance(self.last_ack, AckSubject) or \
                 isinstance(self.last_ack, StopAck):
-            return return_ack
+            return
 
         prev_meas_state = self.state.get_measured_state(bool(len_queue))
 
         if isinstance(prev_meas_state, BufferedStates.WaitingState):
             last_ack = prev_meas_state.last_ack
-
             self._start_loop(last_ack=last_ack, next_index=1)
-
-            return return_ack
-
-        elif isinstance(prev_meas_state, BufferedStates.RunningState):
-            return return_ack
-
-        else:
-            return stop_ack
 
     def on_error(self, exc):
         next_raw_state = RawBufferedStates.OnErrorOrDownStreamStopped()
@@ -208,9 +175,6 @@ class CreateBufferedObserver(Observer, Sink, typing.Subscription):
 
     def get_measured_state(self):
         return self.state.get_measured_state(bool(len(self.queue)))
-
-    def get_buffer_size(self):
-        return self.buffer_size
 
     def get_back_pressure(self):
         return self.back_pressure

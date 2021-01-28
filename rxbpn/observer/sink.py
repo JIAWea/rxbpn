@@ -18,9 +18,9 @@ class Sink:
     def get_measured_state(self):
         raise NotImplementedError
 
-    @abstractmethod
-    def get_buffer_size(self):
-        raise NotImplementedError
+    # @abstractmethod
+    # def get_buffer_size(self):
+    #     raise NotImplementedError
 
     @abstractmethod
     def get_back_pressure(self):
