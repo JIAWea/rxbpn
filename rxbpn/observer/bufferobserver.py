@@ -17,7 +17,7 @@ from rxbp.typing import ElementType
 from rxbpn.observer.sink import Sink
 
 
-class CreateBufferedObserver(Observer, Sink, typing.Subscription):
+class BufferedObserver(Observer, Sink, typing.Subscription):
     def __init__(
             self,
             underlying: Observer,

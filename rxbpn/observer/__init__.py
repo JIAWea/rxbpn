@@ -1,2 +1,2 @@
-from rxbpn.observer.createbufferobserver import CreateBufferedObserver
+from rxbpn.observer.bufferobserver import BufferedObserver
 from rxbpn.observer.sink import Sink
