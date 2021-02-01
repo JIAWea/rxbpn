@@ -3,7 +3,7 @@ from rx.scheduler.scheduler import Scheduler
 from rxbp.observable import Observable
 
 from rxbpn.observable.internal.observe import Observe
-from rxbpn.observer import Sink
+from rxbpn.observer import Sink, BaseSink
 
 
 class CreateBufferObservable(Observe, Observable):
@@ -18,6 +18,6 @@ class CreateBufferObservable(Observe, Observable):
         self.subscribe_scheduler = subscribe_scheduler
 
         # A sink is be able to start loop after backpressure
-        self.sink: Sink = Sink()
+        self.sink: Sink = BaseSink()
 
         super().__init__(self.scheduler, self.subscribe_scheduler)
