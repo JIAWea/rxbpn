@@ -17,7 +17,7 @@ from rxbp.typing import ElementType
 from rxbpn.observer.sink import Sink
 
 
-class BufferedObserver(Observer, Sink, typing.Subscription):
+class PausableBufferedObserver(Observer, Sink):
     def __init__(
             self,
             underlying: Observer,
@@ -178,6 +178,3 @@ class BufferedObserver(Observer, Sink, typing.Subscription):
 
     def get_back_pressure(self):
         return self.back_pressure
-
-    def __call__(self):
-        pass

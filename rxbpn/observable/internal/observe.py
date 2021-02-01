@@ -6,7 +6,7 @@ from rx.disposable import Disposable
 from rx.scheduler import CurrentThreadScheduler
 from rxbp.observerinfo import ObserverInfo
 
-from rxbpn.observer import BufferedObserver, Sink
+from rxbpn.observer import PausableBufferedObserver
 
 
 class Observe:
@@ -24,7 +24,7 @@ class Observe:
         Makes the observable start emitting elements
         """
 
-        observer = BufferedObserver(
+        observer = PausableBufferedObserver(
             underlying=observer_info.observer,
             scheduler=self.scheduler,
             subscribe_scheduler=self.subscribe_scheduler,
