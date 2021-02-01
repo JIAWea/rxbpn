@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='rxbpn',
@@ -8,9 +8,9 @@ setup(
     author='Ray Wong',
     author_email='',
     license='BSD 3-Clause',
-    packages=[
-        'rxbpn',
-    ],
+    packages=find_packages(),
+    package_dir={'rxbpn': 'rxbpn'},
+    include_package_data=True,
     zip_safe=True,
     classifiers=[
         'License :: OSI Approved :: MIT License',
