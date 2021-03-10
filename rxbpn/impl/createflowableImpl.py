@@ -57,14 +57,3 @@ class CreateFlowableImpl(FlowableImpl):
         disposable = observable.observe(observer_info=observer_info)
 
         return disposable
-
-    def buffer(self, buffer_size: int = None):
-        """
-        can not use BufferFlowable,cause it has not implemented backpressure when it's length of queue is 0
-        :return: self
-        """
-        try:
-            raise BufferError
-        except BufferError:
-            print("[Exception] BufferError")
-        return self

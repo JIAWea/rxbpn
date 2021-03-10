@@ -110,8 +110,7 @@ class PausableBufferedObserver(Observer, Sink):
             len_queue = len(self.queue)
             self.queue.append(elem)
 
-        # if last_ack is AckSubject, then stop sending data to downstream,
-        # even the length of queue is 0
+        # if last_ack is AckSubject or StopAck, then stop sending data to downstream
         if isinstance(self.last_ack, AckSubject) or \
                 isinstance(self.last_ack, StopAck):
             return
